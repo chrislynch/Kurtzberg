@@ -29,7 +29,11 @@ function k_load($filename){
     return $return;
 }
 
-class post extends stdClass{
+class kobj extends stdClass{
+    
+}
+
+class post extends kobj{
     
 }
 
