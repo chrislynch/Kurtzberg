@@ -1,5 +1,10 @@
 <?php
 
+include_once('_kurtzberg/lib/phpmarkdownextra/markdown.php');
+
+$page = array();
+$page['posts'] = k_scan();
+
 function k_scan(){
     // Look at the current URL and, based on it, load up the appropriate content
     $return = array();
@@ -17,7 +22,15 @@ function k_scan(){
 }
 
 function k_load($filename){
-    return file_get_contents('_content/' . $filename);
+    $contents = file_get_contents('_content/' . $filename);
+    $return = new post();
+    $return->title = ucwords(str_ireplace('-', ' ', $filename));
+    $return->content = Markdown($contents);
+    return $return;
+}
+
+class post extends stdClass{
+    
 }
 
 ?>
