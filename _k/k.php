@@ -4,6 +4,37 @@ include_once('_k/lib/phpmarkdownextra/markdown.php');
 
 class k {
     
+    function go(){
+        /*
+         * Run a K page
+         * 1: Load amd run the default apps
+         *      Apps of this type should be used for non-URL specific activity
+         *      such as loading up a user, a users cart, or tracking activity,
+         *      or loading up a site wide configuration file
+         * 
+         * 2: Load content for all sections
+         *      Content, in this context, can include PHP code
+         *      This is what happens for a *specific* URL
+         * 
+         * 3: Run post-content apps (?)
+         *      Somtimes, we need to work things out by looking at our content
+         *      a good example is SEO. So, we do this afterwards.
+         * 
+         * 4: Load the view that all will output this content
+         *      Whatever happens, we have to load up a view and output the result
+         */
+    }
+    
+    static function load_default_apps(){
+        // Go and load up the apps for this site.
+        $appfiles = scandir('_k/_apps/');
+        foreach($appfiles as $appfile){
+            if (strstr($appfiles,'.php')){
+                
+            }
+        }
+    }
+    
     static function _direct_load($type = '_content', $section = '_body', $urlpath = ''){
         
         $root = toolbox::index_root();
