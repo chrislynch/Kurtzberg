@@ -31,8 +31,9 @@ class k {
          * 4: Load the view that all will output this content
          *      Whatever happens, we have to load up a view and output the result
          */
-        $this->go_apps();
+        $this->go_apps('__');
         $this->go_content();
+        /* $this->go_apps('_'); */
         $this->go_view();
     }
     
@@ -41,14 +42,18 @@ class k {
         print $this->_view->_body->html;
     }
     
-    private function go_apps(){
+    function debug(){
+        print '<hr><pre>' . htmlentities(print_r($this,TRUE)) . '</pre>';
+    }
+    
+    private function go_apps($prefix){
         // Go and load up the apps for this site.
-        $appfiles = scandir('_k/_apps/');
+        $appfiles = scandir('_k/_plugins/');
         foreach($appfiles as $appfile){
             if (strstr($appfile,'.php')){
-                if(strpos($appfile,'__') === 0){
+                if(strpos($appfile,$prefix) === 0){
                     $classname = str_ireplace('.php', '', $appfile);
-                    include "_k/_apps/$appfile";
+                    include "_k/_plugins/$appfile";
                     $this->$classname = new $classname;
                     $this->$classname->go($this);
                 }
@@ -144,6 +149,15 @@ class k {
         return $file;
     }
     
+    function domain(){
+        global $argv;
+        if (isset($argv[1])){
+            return $argv[1];
+        } else {
+            return $_SERVER['HTTP_HOST'] . toolbox::index_root();
+        }
+    }
+    
 }
 
 class thing {
@@ -169,6 +183,7 @@ class thing {
             $return = TRUE;
         } elseif (file_exists("$path.html")){
             $this->html = file_get_contents("$path.html");
+            $this->html = Markdown($this->html);
             $return = TRUE;
         }
         
@@ -181,7 +196,7 @@ class thing {
     
 }
 
-class app {
+class app extends stdClass{
     
     function go(&$k){
         
