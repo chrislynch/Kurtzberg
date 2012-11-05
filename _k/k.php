@@ -4,6 +4,14 @@ include_once('_k/lib/phpmarkdownextra/markdown.php');
 
 class k {
     
+    var $_content;
+    var $_view;
+    
+    function __construct(){
+        $this->_content = new stdClass();
+        $this->_view = new stdClass();
+    }
+    
     function go(){
         /*
          * Run a K page
@@ -23,19 +31,56 @@ class k {
          * 4: Load the view that all will output this content
          *      Whatever happens, we have to load up a view and output the result
          */
+        $this->go_apps();
+        $this->go_content();
+        $this->go_view();
     }
     
-    static function load_default_apps(){
+    function output(){
+        print $this->_view->_head->html;
+        print $this->_view->_body->html;
+    }
+    
+    private function go_apps(){
         // Go and load up the apps for this site.
         $appfiles = scandir('_k/_apps/');
         foreach($appfiles as $appfile){
-            if (strstr($appfiles,'.php')){
-                
+            if (strstr($appfile,'.php')){
+                if(strpos($appfile,'__') === 0){
+                    $classname = str_ireplace('.php', '', $appfile);
+                    include "_k/_apps/$appfile";
+                    $this->$classname = new $classname;
+                    $this->$classname->go();
+                }
             }
         }
     }
     
-    static function _direct_load($type = '_content', $section = '_body', $urlpath = ''){
+    private function go_content(){
+        // Do the direct load for content.
+        $this->_content->_body = $this->_direct_load();
+        // Do the section load for content. We will never get here if direct load 404s or 500s.
+        $contentdirs = scandir('_k/_content');
+        foreach($contentdirs as $contentdir){
+            if (is_dir("_k/_content/$contentdir") && $contentdir !== '.' && $contentdir !== '..' && $contentdir !== '_body'){
+                $this->_content->$contentdir = $this->_recursive_load('_content', $contentdir);
+            }
+        }
+    }
+    
+    private function go_view(){
+        // Do the section load for content. We will never get here if direct load 404s or 500s.
+        $viewdirs = scandir('_k/_view');
+        foreach($viewdirs as $viewdir){
+            if (is_dir("_k/_view/$viewdir") && $viewdir !== '.' && $viewdir !== '..' && $viewdir !== '_body' && $viewdir !== '_head'){
+                $this->_view->$viewdir = $this->_recursive_load('_view', $viewdir);
+            }
+        }
+        $this->_view->_body = $this->_recursive_load('_view','_body');
+        $this->_view->_head = $this->_recursive_load('_view','_head');
+    }
+    
+    private function _direct_load($type = '_content', $section = '_body', $urlpath = ''){
         
         $root = toolbox::index_root();
         $file = '';
@@ -52,7 +97,7 @@ class k {
             }
         } else {
             $thing = new thing;
-            if ($thing->load($file)) {
+            if ($thing->load($file,$this)) {
                 return $thing;
             } else {
                 toolbox::http_redirect('error/500',500);
@@ -60,7 +105,7 @@ class k {
         }
     }
     
-    static function _recursive_load($type = '_content', $section = '_body',$urlpath = '',$recursion = FALSE) {
+    private function _recursive_load($type = '_content', $section = '_body',$urlpath = '',$recursion = FALSE) {
  
         $root = toolbox::index_root();
         $file = '';
@@ -72,13 +117,13 @@ class k {
         if ($file == '') {
             if (!($urlpath == '_home')){
                 $urlpath = toolbox::up('/',$urlpath);
-                return k::_section_load($section,$urlpath,TRUE);
+                return k::_recursive_load($type,$section,$urlpath,TRUE);
             } else {
                 return new thing();
             }
         } else {
             $thing = new thing;
-            if ($thing->load($file)) {
+            if ($thing->load($file,$this)) {
                 return $thing;
             } else {
                 toolbox::http_redirect('error/500',500);
@@ -87,7 +132,7 @@ class k {
         
     }
     
-    private static function locate($urlpath) {
+    public function locate($urlpath) {
         $file = '';
         if (is_dir("_site/" . $urlpath)){
             $file = "_site/" . $urlpath . '/' . toolbox::pop('/',$urlpath);
@@ -97,21 +142,23 @@ class k {
         return $file;
     }
     
-    
 }
 
 class thing {
     
     public $html;
     public $xml;
+    public $path;
     
     function __construct() {
         $this->html = '';
         $this->xml = new SimpleXMLElement('<xml></xml>');
     }
     
-    function load($path){
+    function load($path,$k){
         $return = FALSE;
+        $this->path = $path;
+        
         if (file_exists("$path.php")){
             ob_start();
             include("$path.php");
@@ -131,6 +178,28 @@ class thing {
     }
     
 }
+
+class appreturn{
+    
+}
+
+class app {
+    
+    function go($k){
+        return new appreturn();
+    }
+    
+}
+
+class view extends thing{
+    /*
+     * In case we ever need to differentiate views from things.
+     */
+}
+
+/*
+ * TOOLBOX : Useful functions for K
+ */
 
 class toolbox {
     

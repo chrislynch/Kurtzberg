@@ -1,9 +1,4 @@
 
-<?php
-_body_home();
-
-function _body_home(){
-    $content = k::_direct_load();
-    echo $content->html;
-}
-?>
+<body>
+    <h1><?php echo $k->_content->_body->html; ?></h1>
+</body>
