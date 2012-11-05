@@ -1,8 +1,8 @@
 <?php
 
-class __session {
+class __session extends app {
     
-    public function go(){
+    public function go(&$k){
         
     }
     

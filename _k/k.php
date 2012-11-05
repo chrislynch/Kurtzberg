@@ -50,7 +50,7 @@ class k {
                     $classname = str_ireplace('.php', '', $appfile);
                     include "_k/_apps/$appfile";
                     $this->$classname = new $classname;
-                    $this->$classname->go();
+                    $this->$classname->go($this);
                 }
             }
         }
@@ -60,6 +60,7 @@ class k {
         // Do the direct load for content.
         $this->_content->_body = $this->_direct_load();
         // Do the section load for content. We will never get here if direct load 404s or 500s.
+        // We should look for content sections in the domain as well as in the _k directory.
         $contentdirs = scandir('_k/_content');
         foreach($contentdirs as $contentdir){
             if (is_dir("_k/_content/$contentdir") && $contentdir !== '.' && $contentdir !== '..' && $contentdir !== '_body'){
@@ -70,6 +71,7 @@ class k {
     
     private function go_view(){
         // Do the section load for content. We will never get here if direct load 404s or 500s.
+        // We should look for view sections in the domain as well as in the _k directory.
         $viewdirs = scandir('_k/_view');
         foreach($viewdirs as $viewdir){
             if (is_dir("_k/_view/$viewdir") && $viewdir !== '.' && $viewdir !== '..' && $viewdir !== '_body' && $viewdir !== '_head'){
@@ -179,14 +181,10 @@ class thing {
     
 }
 
-class appreturn{
-    
-}
-
 class app {
     
-    function go($k){
-        return new appreturn();
+    function go(&$k){
+        
     }
     
 }
