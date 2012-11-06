@@ -10,7 +10,7 @@
 
         <meta name="keywords" content="<?= @$k->_seo->keywords ?>" />
         <meta name="description" content="<?= @$k->_seo->description ?>" />
-        <meta name="abstract" content="<? @$k->_seo->abstract ?>" />
+        <meta name="abstract" content="<?= @$k->_seo->abstract ?>" />
 
         <meta name="copyright" content="<?= @$k->__config->site->copyright ?>" />
 

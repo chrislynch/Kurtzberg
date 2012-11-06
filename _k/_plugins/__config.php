@@ -14,6 +14,11 @@ class __config extends app {
         $this->_geo->ICBM = '51.563899, -3.264585';
         
         $this->seo = new stdClass();
+        
+        $this->seo->keywords = 'Default Keywords';
+        $this->seo->description = 'Default Description';
+        $this->seo->abstract = 'Default Abstract';
+        
         $this->seo->google = new StdClass();
         $this->seo->google->analytics = new StdClass();
         $this->seo->google->analytics->account = '';
