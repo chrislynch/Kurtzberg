@@ -30,18 +30,13 @@
         <meta name="DC.identifier" scheme="DCTERMS.URI" content="http://{@my.domain@}" /> 
 
         <!-- Geo Tagging -->
-        <meta name="geo.region" content="GB-VGL" />
-        <meta name="geo.placename" content="Taff\'s Well" />
-        <meta name="geo.position" content="51.563899;-3.264585" />
-        <meta name="ICBM" content="51.563899, -3.264585" />
-
-        <!-- Google, Yahoo, and Bing tracking -->
-        <meta name="google-site-verification" content="{@data.config.google.webmastertools.account@}" />
-        <meta name="y_key" content="" />
-        <meta name="msvalidate.01" content="20CE00102B0D5E01CD915F444BBD109C" />
+        <meta name="geo.region" content="<?= @$k->__config->_geo->region; ?>" />
+        <meta name="geo.placename" content="<?= @$k->__config->_geo->placename; ?>" />
+        <meta name="geo.position" content="<?= @$k->__config->_geo->position; ?>" />
+        <meta name="ICBM" content="<?= @$k->__config->_geo->ICBM; ?>" />
 
         <!-- URL canonicalisation -->
-        <link rel="canonical" href="{@data.seo.canonical@}" />
+        <link rel="canonical" href="<?= @$k->_seo->canonical ?>" />
 
         <!-- ROBOTS directives -->
         <meta name="robots" content="index,follow" />
@@ -63,8 +58,8 @@
 
         <script type="text/javascript">
             var _gaq = _gaq || [];
-            _gaq.push(['_setAccount', '{@data.config.seo.google.analytics.account@}']);
-            _gaq.push(['_setDomainName', '{@my.domain@}']);
+            _gaq.push(['_setAccount', '<?= $k->__config->seo->google->analytics->account ?>']);
+            _gaq.push(['_setDomainName', 'http://<?= @$k->domain() ?>']);
             _gaq.push(['_setAllowLinker', true]);
             _gaq.push(['_trackPageview']);
 

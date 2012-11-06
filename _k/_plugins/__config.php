@@ -6,6 +6,17 @@ class __config extends app {
         $this->site = new stdClass();
         $this->site->title = 'This is a codename K website.';
         $this->site->copyright = 'Copyright eCommerce Centric Ltd except where noted';
+        
+        $this->_geo = new stdClass();
+        $this->_geo->region = 'GB-VGL';
+        $this->_geo->placename = 'Taff\'s Well';
+        $this->_geo->position = '51.563899;-3.264585';
+        $this->_geo->ICBM = '51.563899, -3.264585';
+        
+        $this->seo = new stdClass();
+        $this->seo->google = new StdClass();
+        $this->seo->google->analytics = new StdClass();
+        $this->seo->google->analytics->account = '';
     }
     
 }

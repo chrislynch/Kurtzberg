@@ -33,7 +33,7 @@ class k {
          */
         $this->go_apps('__');
         $this->go_content();
-        /* $this->go_apps('_'); */
+        $this->go_apps('_'); 
         $this->go_view();
     }
     
@@ -46,12 +46,17 @@ class k {
         print '<hr><pre>' . htmlentities(print_r($this,TRUE)) . '</pre>';
     }
     
-    private function go_apps($prefix){
+    private function go_apps($type){
         // Go and load up the apps for this site.
         $appfiles = scandir('_k/_plugins/');
         foreach($appfiles as $appfile){
+            $loadapp = false;
             if (strstr($appfile,'.php')){
-                if(strpos($appfile,$prefix) === 0){
+                switch($type){
+                    case '__': if (strpos($appfile,'__') === 0){ $loadapp = TRUE;} break;
+                    case '_':  if (strpos($appfile,'_') === 0 && !(strpos($appfile,'__') === 0 )){ $loadapp = TRUE; } break;
+                }
+                if($loadapp){
                     $classname = str_ireplace('.php', '', $appfile);
                     include "_k/_plugins/$appfile";
                     $this->$classname = new $classname;
